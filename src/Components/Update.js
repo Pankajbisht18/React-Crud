@@ -1,73 +1,66 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useParams } from "react-router";
 import firebase from "./Firebase";
-import { useState } from "react";
-const Add = () => {
-    const[data, setData] = useState({roll:'',fname:'',mobile:'',total:''});
-    const handleData = (evt) => {
-        let name = evt.target.name;
-        let value = evt.target.value;
-        setData({...data,[name]:value});
-    } 
-    const handleSubmit = () => {
-        if(data.roll!=='' && data.fname!=='' && data.mobile!=='' && data.total!=='') {
-            const db = firebase.database().ref("student/"+data.roll);
-            db.set(data)
-            setData({roll:'',fname:'',mobile:'',total:''})
-        }
-        else{
-            alert("Enter values in input field");
-        }
-    }
+
+const Update = () => {
+    const {id} = useParams();
+    const[stu, setStu] = useState();
+    useEffect(()=>{
+        const db = firebase.database().ref('student');
+        db.get.child(id).('value',(snapshot)=>{
+            let list = [];
+            snapshot.forEach(snap => {
+                list.push(snap.val());
+            });
+            console.log(list)
+        })
+    },[])
     return(
         <>
-            <h1 className="text-center">Add Data</h1>
+            <h1 className="text-center">Update Data</h1>
             <div className="container">
                 <form>
                     <label className="form-label">Roll No</label>
                     <input 
                         type="text" 
                         name="roll"
-                        value={data.roll}
+                        value="roll"
                         className="form-control" 
                         placeholder="Enter Roll Number"
-                        onChange={handleData}
                     />
                     <label className="form-label">Name</label>
                     <input 
                         type="text"
                         name="fname"
-                        value={data.fname} 
+                        value="fname" 
                         className="form-control" 
                         placeholder="Enter Name"
-                        onChange={handleData} 
+
                     />
                     <label className="form-label">Mobile Number</label>
                     <input 
                         type="text"
                         name="mobile"
-                        value={data.mobile} 
+                        value="mobile" 
                         className="form-control" 
                         placeholder="Enter Mobile Number"
-                        onChange={handleData}
                     />
                     <label className="form-label">Total Marks</label>
                     <input 
                         type="text" 
                         name="total"
-                        value={data.total}
+                        value="total"
                         className="form-control" 
                         placeholder="Enter Total Marks"
-                        onChange={handleData}
                     />
                 </form>
             </div>
             <div className="container mt-3">
                 <button 
                     className="btn btn-success" 
-                    onClick={handleSubmit} 
-                    data-bs-toggle="modal" data-bs-target="#exampleModal"
                 >
-                    Submit
+                    Update
                 </button>
 
                 <Link to="/">
@@ -77,4 +70,4 @@ const Add = () => {
         </>
     );
 }
-export default Add;
+export default Update;
